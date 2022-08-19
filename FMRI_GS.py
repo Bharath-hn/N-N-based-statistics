@@ -78,7 +78,7 @@ def prepare_data(file_name, sub_network = None):
             for j in loc_vec:
                 loc_comm_mat[i,j] = 1
         up_tri = np.triu_indices(len(test_stat_data['ROIS']), k=1, m=None)
-
+        yy = loc_comm_mat[up_tri]
         orig_stat = test_stat_data['test_statistics']['original'][yy == 1]
         perm_stat = test_stat_data['test_statistics']['permuted'][:,yy == 1]        
         ROIS = sub_network
@@ -218,10 +218,13 @@ def get_significant_node(cut_off, p_cut):
             selected_node_conn[roi] = {'adj_mat':yy1, 'orig_NC': orig_cut_off_node_conn[roi], 'perm_NC': perm_temp}
             sign_node_list.append('%d--->%s--->%0.4f'%(roi,all_parc[roi],node_p_value[roi]))
 
-    UI1 = widgets.interact_manual(plot_selected_node_conn, sel_node = widgets.Select(options=sign_node_list,value=sign_node_list[0],rows= len(sign_node_list),description = 'Significant_nodes',
-                                                                                   disabled=False,layout = widgets.Layout(width='500px')))    
-    
-    display(UI1)       
+    if(len(sign_node_list) > 0):
+        UI1 = widgets.interact_manual(plot_selected_node_conn, sel_node = widgets.Select(options=sign_node_list,value=sign_node_list[0],rows= len(sign_node_list),
+                                                                                         description = 'Significant_nodes', disabled=False,layout = widgets.Layout(width='500px')))    
+
+        display(UI1)       
+    else:
+        print('No significant node is present')
     
     
 def Node_BS(file_name, sub_network = None):
